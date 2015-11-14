@@ -1,4 +1,4 @@
-function gradients = compute_cell_gradients( G, v, cells)
+function gradients = cell_gradients( G, v, cells)
 gradients = zeros(numel(cells), 2);
 for c = 1:numel(cells)
     cell = cells(c);
