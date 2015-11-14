@@ -1,4 +1,4 @@
-function phi = solve_laplace( G, top_phi, top, left, right )
+function [ phi, v ] = solve_laplace( G, top_phi, top, left, right )
 %SOLVE_LAPLACE Solve the Laplace equation on the supplied geometry.
 % TODO: Write more documentation
 %
@@ -43,15 +43,14 @@ nnhf = nnz(is_neumann_half_faces);
 % Dirichlet boundary conditons.
 dirich_pii_rhs = zeros(nf, 1); % called pii instead of pi
 dirich_pii_rhs(is_dirich_faces) = dirich_p; 
-dirich_rhs = -D*dirich_pii_rhs; 
+dirich_rhs = -D*dirich_pii_rhs;
 
 % Reduce the system to the unknown variables.
 D = D(:, is_int_faces);
 N = - sparse(neuman_half_faces, 1 : nnhf , 1, nhf, nnhf);
 
 % Compute the right-hand side using the dirichlet conditions
-dirich_rhs = [dirich_rhs; zeros(nc + nif + nnhf, 1)];
-rhs = dirich_rhs;
+rhs = [dirich_rhs; zeros(nc + nif + nnhf, 1)];
 
 % Schur reduction
 R = [[-C'; -D'; -N']*BI, eye(nc + nif + nnhf)];
@@ -62,8 +61,13 @@ rhs = R*rhs;
 % Solve the system.
 sol = Q\rhs;
 
-% Recover the potential.
+% Recover phi, pi
 phi = sol([true(nc, 1); false(nif, 1); false(nnhf, 1)]);
+pi = sol([false(nc, 1); true(nif, 1); false(nnhf, 1)]);
+phi_neum = sol([false(nc, 1); false(nif, 1); true(nnhf, 1)]);
+
+% Compute v
+v = BI * (dirich_rhs - C * phi - D * pi - N * phi_neum);
 
 end
 
