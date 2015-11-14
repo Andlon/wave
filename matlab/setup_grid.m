@@ -42,6 +42,7 @@ x1 = x(:, 1);
 xx(:, 1) = x1;
 xx(:, 2) = -h_shifted(x1) + (eta(x1) + h_shifted(x1)).*x(:, 2);
 G.nodes.coords = xx;
+G = computeGeometry(G);
 
 end
 
