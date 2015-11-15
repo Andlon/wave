@@ -2,7 +2,7 @@ function gradients = cell_gradients( G, v, cells)
 gradients = zeros(numel(cells), 2);
 for c = 1:numel(cells)
     cell = cells(c);
-    gradients(cell, :) = compute_cell_gradient(G, v, cell);
+    gradients(c, :) = compute_cell_gradient(G, v, cell);
 end
 end
 
@@ -12,6 +12,8 @@ half_faces = G.cells.facePos(cell) : G.cells.facePos(cell + 1) - 1;
 faces = G.cells.faces(half_faces);
 weighted_face_normals = G.faces.normals(faces, :);
 areas = G.faces.areas(faces, :);
+A = repmat(areas, 1, dimension);
+face_normals = weighted_face_normals ./ A;
 face_neighbors = G.faces.neighbors(faces, :);
 
 % Compute the half face normals. These are +- face normals, so we only
@@ -21,8 +23,8 @@ face_neighbors = G.faces.neighbors(faces, :);
 % dir = cell in first column of face_neighbors => 1, otherwise => -1
 half_face_directions = 2 * (face_neighbors(:, 1) == cell) - 1;
 D = repmat(half_face_directions, 1, dimension);
-A = repmat(areas, 1, dimension);
-half_face_normals = D .* weighted_face_normals ./ A;
+
+half_face_normals = D .* face_normals;
 
 % TODO: Determine if the following assumption is correct:
 % The normals of the half-faces are defined such that they face
