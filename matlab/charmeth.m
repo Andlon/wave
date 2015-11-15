@@ -75,12 +75,12 @@ end
 figure
 mesh(t,xq,u)
 title('Velocity')
-xlabel('x')
-ylabel('t')
+xlabel('t')
+ylabel('x')
 
 
 figure
 mesh(t,xq,eta)
 title('Surface')
-xlabel('x')
-ylabel('t')
+xlabel('t')
+ylabel('x')
