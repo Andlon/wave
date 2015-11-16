@@ -5,8 +5,6 @@ function eta = next_surface_shape( dx, dt, eta, grad_phi )
 % TODO: Better ways to approximate this?
 eta_x = [ diff(eta); eta(end) - eta(end-1) ] / dx;
 A = [ eta_x'; - ones(1, numel(eta_x)) ];
-size(grad_phi)
-size(A)
 dots = trace(grad_phi * A);
 eta = eta - dt * dots;
 

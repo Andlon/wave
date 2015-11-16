@@ -27,9 +27,5 @@ phi_top = X;
 % uy = gradients(:, 2);
 % quiver(x, y, ux, uy);
 
-%% Computation of surface node gradients
-top_nodes = face_nodes(G, top);
-top_grad = node_gradients(G, v, top_nodes);
-
 %% Compute surface eta
-eta = solve_wave(G, phi_top, top, left, right, bottom, nx, dt, 10, 9.81 / 1000);
+eta = solve_wave(G, phi_top, top, left, right, nx, dt, 10, 9.81 / 1000);
