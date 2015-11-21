@@ -29,7 +29,7 @@ D = sparse(1:numel(cellNo), double(half_faces), 1, numel(cellNo), G.faces.num);
 % condition is applied.
 is_dirich_faces = false(nf, 1);
 is_dirich_faces(dirich_faces) = true;
-is_dirich_half_faces = is_dirich_faces(half_faces);
+
 is_ext_faces  = (G.faces.neighbors(:, 1) == 0) | (G.faces.neighbors(:, 2) == 0) ;
 is_int_faces = ~is_ext_faces;
 nif = nnz(is_int_faces);
