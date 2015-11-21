@@ -1,26 +1,37 @@
 mrstModule add mimetic
 
+clear;
+close all;
+
 %% Configuration
 nx = 50;
-nz = 25;
-nt = 500;
-dt = 0.01;
-
-dx = 1 / nx;
+nz = 50;
+nt = 100;
+dt = 0.005;
+g = 9.81;
 
 %% Boundary and initial conditions
-eta_initial = @(x) 0.1 * sin(5 * pi*x);
-h =   @(x) 0.05 * cos(3 * pi * x);
+eta0 = @(x) zeros(size(x)); %  0.1 * sin(5 * pi * x);
+h =   @(x) zeros(size(x));  % 0.05 * cos(3 * pi * x);
 
 X = linspace(0, 1, nx);
-%phi_top = 25 * exp(-25*(X-0.5).^2);
-phi_top = X;
+phi_top = exp(-(X-0.5).^2) - 0.8;
+%phi_top = X;
 
-%% Grid construction
-[ G, top, bottom, left, right ] = setup_grid(eta_initial, h, nx, nz);
+%% Setup simulation
+sim = simulation(nx, nz, g, eta0, h);
 
 %% Compute surface eta
-eta = solve_wave(G, phi_top, top, left, right, h, nx, nz, dt, nt, 9.81 / 10);
+eta = solve_wave(sim, phi_top, dt, nt);
 
 x = linspace(0, 1, nx + 1);
 t = dt * (0 : nt);
+
+%% Visualize
+figure
+for i = 1:length(t)
+    newplot;
+    plot(x, eta(:, i));
+    ylim([-0.005, 0.005])
+    pause(0.1)
+end

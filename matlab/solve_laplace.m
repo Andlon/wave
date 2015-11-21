@@ -1,4 +1,4 @@
-function [ phi, v ] = solve_laplace( G, top_phi, top, left, right )
+function [ phi, v ] = solve_laplace( G, top_phi, top_faces)
 %SOLVE_LAPLACE Solve the Laplace equation on the supplied geometry.
 % TODO: Write more documentation
 %
@@ -12,7 +12,7 @@ nhf = numel(half_faces);
 % Need to decide on boundary conditions here.
 %dirich_faces = [ top, left, right ];
 %dirich_p = [ top_phi, zeros(1, numel(left)), zeros(1, numel(right)) ];
-dirich_faces = top;
+dirich_faces = top_faces;
 dirich_p = top_phi;
 
 % Compute the mimetic scalar product
@@ -42,7 +42,7 @@ nnhf = nnz(is_neumann_half_faces);
 % We construct the right-hand side corresponding to the source term coming from the
 % Dirichlet boundary conditons.
 dirich_pii_rhs = zeros(nf, 1); % called pii instead of pi
-dirich_pii_rhs(is_dirich_faces) = dirich_p; 
+dirich_pii_rhs(dirich_faces) = dirich_p; 
 dirich_rhs = -D*dirich_pii_rhs;
 
 % Reduce the system to the unknown variables.

@@ -1,57 +1,35 @@
-function eta = solve_wave( G, phi0_top, top_faces, ...
-    left_faces, right_faces, h, nx, nz, dt, nt, g)
+function eta = solve_wave( sim, surface_phi0, dt, nt)
 % SOLVE_WAVE(...)
 
-top_cells = boundary_cells(G, top_faces);
-top_nodes = sort_boundary_nodes(G, face_nodes(G, top_faces));
+dx = 1/sim.Nx;
 
-phi_top_faces = phi0_top;
-dx = 1/nx;
-
-eta = zeros(nx + 1, nt + 1);
-eta(:, 1) = G.nodes.coords(top_nodes, 2);
+eta = zeros(sim.Nx + 1, nt + 1);
+eta(:, 1) = sim.eta();
 
 % Solve for initial phi in the entirety of the domain and compute gradients
-[phi, v] = solve_laplace(G, phi_top_faces, ...
-    top_faces, left_faces, right_faces);
-grad_phi_top = cell_gradients(G, v, top_cells);
-phi_top = phi(top_cells);
+[phi, v] = solve_laplace(sim.grid, surface_phi0, sim.top_faces);
 
-surface_shape = G.faces.centroids(top_faces, 2);
+surface_shape = sim.surface_shape();
+surface_phi_grad = sim.surface_potential_gradient(v);
+surface_phi = sim.surface_potential(phi);
 
 for n = 1:nt
-    surface_shape = next_surface_shape(dx, dt, surface_shape, grad_phi_top);
-    
-    % We now have values for the centroids
-    % of the top faces for the new domain. Interpolate the difference from
-    % the old domain to attain new values at the surface nodes
-    
-    [ G, top_faces, ~, left_faces, right_faces ] = ...
-        update_geometry(G, top_nodes, top_faces, surface_shape, h, nx, nz);
-    eta(:, n + 1) = G.nodes.coords(top_nodes, 2);
-    top_cells = boundary_cells(G, top_faces);
-    top_nodes = sort_boundary_nodes(G, face_nodes(G, top_faces));
+    surface_shape = next_surface_shape(dx, dt, surface_shape, surface_phi_grad);    
+    sim.update_surface(surface_shape);
+    eta(:, n + 1) = sim.eta();
     
     % At this point we have the shape of our new domain, but
-    % only potential data for our old domain. The best we can do is
-    % probably to interpolate our old data to fit our new domain.
-    % TODO: Implement interpolation onto new domain
+    % only potential data for our old domain. For now we just use the data
+    % for our old domain, but this will inevitably introduce an error.
+    % Unforuntately we're not likely to be able to extrapolate well either,
+    % so it's unclear if we can do any better.
     
-    phi_top = next_surface_potential(g, dt, surface_shape, ...
-        phi_top, grad_phi_top);
-    [phi, v] = solve_laplace(G, phi_top, ...
-        top_faces, left_faces, right_faces);
+    surface_phi = next_surface_potential(sim.g, dt, surface_shape, ...
+        surface_phi, surface_phi_grad);
+    [phi, v] = solve_laplace(sim.grid, surface_phi, sim.top_faces);
     
-    grad_phi_top = cell_gradients(G, v, top_cells);
-    phi_top = phi(top_cells);   
+    surface_phi_grad = sim.surface_potential_gradient(v);
+    surface_phi = sim.surface_potential(phi);
 end
 
-
-end
-
-function top_nodes = sort_boundary_nodes(G, top_nodes)
-% Sorts nodes on boundary along their x-axis coordinates
-xcoords = G.nodes.coords(top_nodes, 1);
-[~, I] = sort(xcoords);
-top_nodes = top_nodes(I);
 end
