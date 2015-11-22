@@ -30,7 +30,7 @@ half_face_normals = D .* face_normals;
 % The normals of the half-faces are defined such that they face
 % from the faces into the interior of their respective cells.
 % In this case, we must flip the signs of our normals:
-half_face_normals = - half_face_normals;
+%half_face_normals = - half_face_normals;
 
 projected_gradients = v(half_faces);
 grad = half_face_normals \ projected_gradients;

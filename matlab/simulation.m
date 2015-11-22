@@ -64,9 +64,7 @@ classdef simulation < handle
                 left, ...
                 right ] ...
                 = ...
-                update_geometry(obj.grid, ...
-                obj.top_nodes, ...
-                obj.top_faces, ...
+                update_geometry(...
                 surface_shape, ...
                 obj.h, ...
                 obj.Nx, ...
@@ -76,28 +74,24 @@ classdef simulation < handle
         end
         
         function [shape, top] = surface_shape(obj)
-            % SURFACE_SHAPE Retrieve the eta values for the top face
-            % centroids.
+            % SURFACE_SHAPE Retrieve the eta values for the surface nodes.
             
-            top = obj.top_faces;
-            shape = obj.grid.faces.centroids(top, 2);
+            top = obj.top_nodes;
+            shape = obj.grid.nodes.coords(top, 2);
         end
         
         function [grad, top] = surface_potential_gradient(obj, v)
-            % SURFACE_POTENTIAL_GRADIENT Compute gradient at surface face
-            % centroids given half face gradient projections v.
+            % SURFACE_POTENTIAL_GRADIENT Compute gradient at surface nodes
+            % given half face gradient projections v.
             
-            top = obj.top_faces;
-            cells = boundary_cells(obj.grid, top);
-            grad = cell_gradients(obj.grid, v, cells);            
+            top = obj.top_nodes;
+            grad = node_boundary_gradients(obj.grid, v, top);
         end
         
         function [potential, top] = surface_potential(obj, phi)
-            % SURFACE_POTENTIAL Compute potential at surface face
-            % centroids.
-            top = obj.top_faces;
-            cells = boundary_cells(obj.grid, top);
-            potential = phi(cells);
+            % SURFACE_POTENTIAL Compute potential at surface nodes.
+            top = obj.top_nodes;
+            potential = node_boundary_potential(obj.grid, phi, top);
         end
         
         function eta = eta(obj)

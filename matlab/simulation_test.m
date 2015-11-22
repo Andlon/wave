@@ -12,8 +12,8 @@ classdef simulation_test < matlab.unittest.TestCase
             eta = @(x) zeros(size(x));
             h = @(x) zeros(size(x));
             s = simulation(nx, nz, 10, eta, h);
-            top = s.top_faces;
-            test.surface_x = s.grid.faces.centroids(top, 1);
+            top = s.top_nodes;
+            test.surface_x = s.grid.nodes.coords(top, 1);
             test.sim = s;
         end
     end
@@ -30,9 +30,7 @@ classdef simulation_test < matlab.unittest.TestCase
             
             new_surface = sin(5 * pi * X);
             S.update_surface(new_surface);
-            plot(X, S.surface_shape());
             test.assertEqual(S.surface_shape(), new_surface, 'AbsTol', 1e-12);
-            
         end
     end
     
