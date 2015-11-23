@@ -4,10 +4,10 @@ options = process_options(varargin);
 dx = 1/sim.Nx;
 
 eta = zeros(sim.Nx + 1, nt + 1);
-eta(:, 1) = sim.eta();
+eta(:, 1) = sim.surface_shape();
 
 % Solve for initial phi in the entirety of the domain and compute gradients
-[phi, v] = solve_laplace(sim.grid, surface_phi0, sim.top_faces);
+[phi, v] = solve_laplace(sim.grid, surface_phi0, sim.surface_faces);
 
 surface_shape = sim.surface_shape();
 surface_phi_grad = sim.surface_potential_gradient(v);
@@ -35,17 +35,17 @@ for n = 1:nt
     % but our Laplace solver requires Dirichlet conditions on the faces.
     % Approximate face potentials from these nodal values.
     surface_face_phi = face_potential(surface_phi);       
-    [phi, v] = solve_laplace(sim.grid, surface_face_phi, sim.top_faces);
+    [phi, v] = solve_laplace(sim.grid, surface_face_phi, sim.surface_faces);
     
     surface_phi_grad = sim.surface_potential_gradient(v);
     surface_phi = sim.surface_potential(phi);
     
-    if options.ShowProgress
+    if options.ShowProgress && ishandle(w_handle)
        waitbar(n / nt, w_handle)
     end
 end
 
-if options.ShowProgress
+if options.ShowProgress && ishandle(w_handle)
    close(w_handle); 
 end
 
