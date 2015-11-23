@@ -6,6 +6,6 @@ cells = sorted_neighbors(:, 2);
 % Additional layer of debugging to catch errors. Comment out for 
 % increased performance. Checks that all faces are actually on the
 % boundary by asserting that each face is only connected to one cell.
-assert(~all(sorted_neighbors(:, 1)), 'faces must be on boundary!');
+assert(~any(sorted_neighbors(:, 1)), 'faces must be on boundary!');
 end
 

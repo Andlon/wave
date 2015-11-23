@@ -11,7 +11,8 @@ for i = 1:numel(nodes)
     
     local_face_is_node_neighbor = G.faces.nodes == node;
     faces = global_faces(local_face_is_node_neighbor);
-    cells = boundary_cells(G, faces);
+    faces = faces(is_boundary_face(G, faces));
+    cells = unique(boundary_cells(G, faces));
     
     cellpotentials = phi(cells);
     
@@ -21,4 +22,11 @@ end
 
 
 end
+
+function is_boundary = is_boundary_face(G, faces)
+sorted_neighbors = sort(G.faces.neighbors(faces, :), 2);
+is_boundary = sorted_neighbors(:, 1) == 0;
+end
+
+
 
