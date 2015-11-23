@@ -14,14 +14,14 @@ classdef simulation < handle
         grid
         
         % Physical dimension in x-direction
-        L = 1
+        L
         
         % Depth of water
-        D = 1
+        D
         
         % Number of points in x and z directions
-        Nx = 50
-        Nz = 50
+        Nx
+        Nz
         
         % Surface face and node indices
         surface_faces
@@ -47,6 +47,8 @@ classdef simulation < handle
             obj.Nz = Nz;
             obj.h = h;
             obj.eta0 = eta0;
+            obj.L = L;
+            obj.D = D;
             
             [G, faces, nodes] = setup_grid(L, D, eta0, h, Nx, Nz);
             obj.grid = G;
@@ -62,11 +64,6 @@ classdef simulation < handle
             %   specified shape, where shape is a vector of z-values
             %   indexed such that surface_shape(top_faces(i)) is the new
             %   value for eta at the face top
-            % [G, surface_faces, surface_nodes] = update_geometry(obj.L, obj.D, surface_shape, obj.h, obj.Nx, obj.Nz);
-            %                 surface_shape, ...
-            %                 obj.h, ...
-            %                 obj.Nx, ...
-            %                 obj.Nz);
             
             dx = obj.L / obj.Nx;
             nodefunc = @(x) surface_shape(round(1 + x / dx));
@@ -99,11 +96,6 @@ classdef simulation < handle
             % SURFACE_POTENTIAL Compute potential at surface nodes.
             top = obj.surface_nodes;
             potential = node_boundary_potential(obj.grid, phi, top);
-        end
-        
-        function eta = eta(obj)
-            % ETA Compute surface height at surface nodes.
-            eta = obj.grid.nodes.coords(obj.surface_nodes, 2);
         end
         
     end
