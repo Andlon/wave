@@ -20,10 +20,6 @@ require mimetic;
 G = cartGrid([nx, nz], [L, D]);
 G = computeGeometry(G);
 
-% Identify boundary faces. Note that direct comparison works here
-% because 32-bit integers can be exactly represented as doubles,
-% and so it will only work as long as the cartesian grid is instantiated
-% as [0, 1]x[0, 1] or similar.
 all_faces = 1 : G.faces.num;
 all_nodes = 1 : G.nodes.num;
 surface_faces = all_faces(G.faces.centroids(:, 2) == D);
