@@ -7,12 +7,15 @@ classdef simulation_test < matlab.unittest.TestCase
     
     methods(TestMethodSetup)
         function setupSim(test)
+            L = 5;
+            D = 5;
             nx = 50;
             nz = 50;
             eta = @(x) zeros(size(x));
             h = @(x) zeros(size(x));
-            s = simulation(nx, nz, 10, eta, h);
-            top = s.top_nodes;
+            
+            s = simulation(L, D, nx, nz, eta, h);
+            top = s.surface_nodes;
             test.surface_x = s.grid.nodes.coords(top, 1);
             test.sim = s;
         end
