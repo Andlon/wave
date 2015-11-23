@@ -1,7 +1,7 @@
 function eta = solve_wave( sim, surface_phi0, dt, nt, varargin)
 % SOLVE_WAVE(...)
 options = process_options(varargin);
-dx = 1/sim.Nx;
+dx = sim.L / sim.Nx;
 
 eta = zeros(sim.Nx + 1, nt + 1);
 eta(:, 1) = sim.surface_shape();
@@ -20,13 +20,7 @@ end
 for n = 1:nt
     surface_shape = next_surface_shape(dx, dt, surface_shape, surface_phi_grad);    
     sim.update_surface(surface_shape);
-    eta(:, n + 1) = sim.eta();
-    
-    % At this point we have the shape of our new domain, but
-    % only potential data for our old domain. For now we just use the data
-    % for our old domain, but this will inevitably introduce an error.
-    % Unforuntately we're not likely to be able to extrapolate well either,
-    % so it's unclear if we can do any better.
+    eta(:, n + 1) = surface_shape;
     
     surface_phi = next_surface_potential(sim.g, dt, surface_shape, ...
         surface_phi, surface_phi_grad);
