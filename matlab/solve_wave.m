@@ -14,7 +14,8 @@ surface_phi_grad = sim.surface_potential_gradient(v);
 surface_phi = sim.surface_potential(phi);
 
 if options.ShowProgress
-   w_handle = waitbar(0, 'Computing solution...');
+    w_handle = waitbar(0, 'Computing solution...');
+    prev_progress = 0;
 end
 
 for n = 1:nt
@@ -34,14 +35,23 @@ for n = 1:nt
     surface_phi_grad = sim.surface_potential_gradient(v);
     surface_phi = sim.surface_potential(phi);
     
-    if options.ShowProgress && ishandle(w_handle)
-       waitbar(n / nt, w_handle)
-    end
+    showProgress();
+    
 end
 
 if options.ShowProgress && ishandle(w_handle)
-   close(w_handle); 
+    close(w_handle);
 end
+
+    function showProgress()
+        if options.ShowProgress && ishandle(w_handle)
+            progress = round(100 * (n / nt));
+            if progress > (prev_progress + 5)
+                waitbar(progress / 100, w_handle);
+                prev_progress = progress;
+            end
+        end
+    end
 
 end
 
