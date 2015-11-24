@@ -6,7 +6,7 @@ classdef simulation < handle
     
     properties
         % Gravitational acceleration
-        g = 9.81
+        g = -9.81
     end
     
     properties(SetAccess = private)
