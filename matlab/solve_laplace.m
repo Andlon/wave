@@ -53,8 +53,8 @@ N = - sparse(neuman_half_faces, 1 : nnhf , 1, nhf, nnhf);
 rhs = [dirich_rhs; zeros(nc + nif + nnhf, 1)];
 
 % Schur reduction
-R = [[-C'; -D'; -N']*BI, eye(nc + nif + nnhf)];
-A = [[C, D, N]; zeros(nc + nif + nnhf)];
+R = [[-C'; -D'; -N']*BI, speye(nc + nif + nnhf)];
+A = [[C, D, N]; spalloc(nc + nif + nnhf, nc + nif + nnhf, 0)];
 Q = R*A;
 rhs = R*rhs;
 
